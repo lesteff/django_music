@@ -1,0 +1,9 @@
+__pycahe__/
+*.py[cod]
+*.env
+.venv/
+.idea/
+
+
+media/
+staticfiles/

@@ -1,0 +1,226 @@
+:root {
+    --neon-pink: #ff00ff;
+    --neon-blue: #00ffff;
+    --neon-green: #00ff00;
+    --neon-purple: #bf00ff;
+    --deep-space: #0a0a1f;
+    --cosmic-purple: #1a0033;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(-45deg, #0a0a1f, #1a0033, #2d004d, #0a0a1f);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Анимированный градиентный фон */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Плавающие частицы */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(circle at 20% 80%, rgba(255, 0, 255, 0.1) 2px, transparent 0),
+        radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.1) 2px, transparent 0),
+        radial-gradient(circle at 40% 40%, rgba(0, 255, 0, 0.1) 1px, transparent 0);
+    background-size: 50% 50%, 50% 50%, 50% 50%;
+    animation: float 20s infinite linear;
+    z-index: -1;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-100px) rotate(360deg); }
+}
+
+/* Навбар с неоновым эффектом */
+.navbar-dark.bg-dark {
+    background: linear-gradient(90deg,
+        rgba(10, 10, 31, 0.95) 0%,
+        rgba(42, 0, 77, 0.95) 50%,
+        rgba(10, 10, 31, 0.95) 100%) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, var(--neon-pink), var(--neon-blue)) 1;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.navbar-brand {
+    font-size: 1.8rem !important;
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
+    to { text-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.6); }
+}
+
+.nav-link {
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: var(--neon-blue) !important;
+    text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Кнопки с психоделическим эффектом */
+.btn-outline-light {
+    border: 2px solid transparent;
+    background: linear-gradient(45deg, transparent, transparent),
+                linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-outline-light:hover {
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Карточки для контента */
+.card {
+    background: rgba(26, 0, 51, 0.7) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+    border-image: linear-gradient(45deg, var(--neon-pink), var(--neon-blue)) 1;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(255, 0, 255, 0.3),
+                0 0 30px rgba(0, 255, 255, 0.2);
+}
+
+/* Футер */
+.bg-dark {
+    background: linear-gradient(90deg,
+        rgba(10, 10, 31, 0.95) 0%,
+        rgba(42, 0, 77, 0.95) 50%,
+        rgba(10, 10, 31, 0.95) 100%) !important;
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, var(--neon-blue), var(--neon-pink)) 1;
+    backdrop-filter: blur(10px);
+}
+
+/* Кастомный скроллбар */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--deep-space);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--neon-pink), var(--neon-blue));
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(var(--neon-blue), var(--neon-pink));
+}
+
+/* Анимация для текста */
+.psychedelic-text {
+    background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue), var(--neon-green), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: textShift 3s ease-in-out infinite;
+}
+
+@keyframes textShift {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(180deg); }
+}
+
+/* Эффект для форм */
+.form-control {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    backdrop-filter: blur(10px);
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: var(--neon-blue) !important;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3) !important;
+    color: white !important;
+}
+
+/* Пульсирующая анимация для музыки */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.music-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Медиа-запросы для мобильных */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.5rem !important;
+    }
+
+    body::before {
+        animation-duration: 30s;
+    }
+}
