@@ -28,17 +28,17 @@ def main_view(request):
     genres = Genre.objects.all()
     genre_id = request.GET.get('genre')
     query = request.GET.get('q')
-    play_song_id = request.GET.get('play')
+    show_player_id = request.GET.get('show_player')
 
-    if play_song_id:
+
+    if show_player_id and not request.session.get('already_played') == show_player_id:
         try:
-            song = Song.objects.get(id=play_song_id)
+            song = Song.objects.get(id=show_player_id)
             song.play_count += 1
             song.save()
+            request.session['already_played'] = show_player_id
         except Song.DoesNotExist:
-            params = request.GET.copy()
-            params.pop('play', None)
-            return redirect(f"{request.path}?{params.urlencode()}")
+            pass
 
     songs = Song.objects.all()
     if genre_id:
@@ -49,19 +49,12 @@ def main_view(request):
             Q(artist__name__icontains=query)
         )
 
+    top_song = Song.objects.order_by('-play_count').first()
+
     return render(request, 'main.html', {
         'songs': songs,
         'genres': genres,
         'selected_genre': genre_id,
+        'top_song': top_song,
+        'show_player_id': show_player_id,
     })
-
-
-def play_song_view(request, song_id):
-    """Представление для проигрывания песни и увеличения счетчика"""
-    try:
-        song = Song.objects.get(id=song_id)
-        song.play_count += 1
-        song.save()
-        return redirect('main')
-    except Song.DoesNotExist:
-        return redirect('main')

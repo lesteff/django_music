@@ -1,104 +1,139 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
-
 {% block title %}Список песен{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    <h1 class="mb-4 psychedelic-text">🎵 Музыкальная коллекция</h1>
+    <div class="row">
+        <!-- Основной контент с песнями -->
+        <div class="col-lg-9">
+            <h1 class="mb-4 psychedelic-text">🎵 Музыкальная коллекция</h1>
 
-    <!-- Поиск -->
-    <form method="get" class="text-center mb-4">
-        <div class="input-group w-50 mx-auto">
-            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Поиск по песне или артисту..."
-                   class="form-control border-primary">
-            <button class="btn btn-primary" type="submit">🔍 Найти</button>
-        </div>
-    </form>
+            <form method="get" class="text-center mb-4">
+                <div class="input-group w-75 mx-auto">
+                    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Поиск по песне или артисту..."
+                           class="form-control border-primary">
+                    <button class="btn btn-primary" type="submit">🔍 Найти</button>
+                </div>
+            </form>
 
-    <!-- Фильтр по жанрам -->
-    <div class="mb-4 text-center">
-        <strong class="text-white">Категории:</strong>
-        <a href="{% url 'main' %}" class="btn btn-sm {% if not selected_genre %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">Все</a>
-        {% for genre in genres %}
-            <a href="?genre={{ genre.id }}" class="btn btn-sm {% if genre.id|stringformat:'s' == selected_genre %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">
-                {{ genre.name }}
-            </a>
-        {% endfor %}
-    </div>
+            <div class="mb-4 text-center">
+                <strong class="text-white">Категории:</strong>
+                <a href="{% url 'main' %}"
+                   class="btn btn-sm {% if not selected_genre %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">Все</a>
+                {% for genre in genres %}
+                <a href="?genre={{ genre.id }}"
+                   class="btn btn-sm {% if genre.id|stringformat:'s' == selected_genre %}btn-primary{% else %}btn-outline-primary{% endif %} mx-1">
+                    {{ genre.name }}
+                </a>
+                {% endfor %}
+            </div>
 
-    <!-- Список песен -->
-    <div class="row justify-content-center">
-        {% for song in songs %}
-            <div class="col-lg-8 col-md-10 mb-4">
-                <div class="card music-card hover-effect">
-                    <div class="row g-0">
-                        <div class="col-md-4 d-flex align-items-center">
-                            {% if song.album and song.album.cover %}
-                                <img src="{{ song.album.cover.url }}" class="img-fluid rounded-start album-cover" alt="{{ song.title }}">
-                            {% else %}
-                                <img src="{% static 'images/no-image.png' %}" class="img-fluid rounded-start album-cover" alt="Нет изображения">
-                            {% endif %}
-                        </div>
+            <div class="row">
+                {% for song in songs %}
+                <div class="col-12 mb-4">
+                    <div class="card music-card hover-effect">
+                        <div class="row g-0">
+                            <div class="col-md-4 d-flex align-items-center">
+                                {% if song.album and song.album.cover %}
+                                <img src="{{ song.album.cover.url }}" class="img-fluid rounded-start album-cover"
+                                     alt="{{ song.title }}">
+                                {% else %}
+                                <img src="{% static 'images/no-image.png' %}"
+                                     class="img-fluid rounded-start album-cover" alt="Нет изображения">
+                                {% endif %}
+                            </div>
 
-                        <div class="col-md-8">
-                            <div class="card-body d-flex flex-column h-100">
-                                <h5 class="card-title text-white">{{ song.title }}</h5>
-                                <p class="card-text text-light">
-                                    <strong>Артист:</strong> {{ song.artist.name }} <br>
-                                    {% if song.album %}
+                            <div class="col-md-8">
+                                <div class="card-body d-flex flex-column h-100">
+                                    <h5 class="card-title text-white">{{ song.title }}</h5>
+                                    <p class="card-text text-light">
+                                        <strong>Артист:</strong> {{ song.artist.name }} <br>
+                                        {% if song.album %}
                                         <strong>Альбом:</strong> {{ song.album.title }} <br>
-                                    {% endif %}
-                                    <strong>Жанр:</strong>
-                                    {% if song.genre %}
+                                        {% endif %}
+                                        <strong>Жанр:</strong>
+                                        {% if song.genre %}
                                         <span class="badge bg-primary">{{ song.genre.name }}</span>
-                                    {% endif %}
-                                </p>
+                                        {% endif %}
+                                    </p>
 
-                                <div class="mt-auto">
-                                    {% if song.audio_file %}
-                                        <!-- Счетчик и кнопка -->
+                                    <div class="mt-auto">
+                                        {% if song.audio_file %}
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <div>
                                                 <strong class="text-white">Прослушиваний: {{ song.play_count|default:0 }}</strong>
                                             </div>
-                                            <form method="post" action="{% url 'play_song' song.id %}" class="d-inline">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-success btn-sm">
-                                                    ▶ Прослушать (+1)
-                                                </button>
-                                            </form>
+                                            <!-- Кнопка для показа аудиоплеера и увеличения счетчика -->
+                                            <a href="?show_player={{ song.id }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}"
+                                               class="btn btn-success btn-sm">
+                                                ▶ Воспроизвести
+                                            </a>
                                         </div>
 
-                                        <!-- Аудиоплеер -->
+
+                                        {% if show_player_id == song.id|stringformat:"i" %}
                                         <div class="audio-player-section">
-                                            <audio controls preload="none" class="w-100">
+                                            <audio controls preload="none" class="w-100" autoplay>
                                                 <source src="{{ song.audio_file.url }}" type="audio/mpeg">
                                                 Ваш браузер не поддерживает аудио.
                                             </audio>
-                                            <small class="text-muted d-block mt-1">Формат: MP3</small>
+
+                                            <!-- Кнопка скрытия плеера -->
+                                            <div class="text-end mt-2">
+                                                <a href="?{% if request.GET.q %}q={{ request.GET.q }}{% endif %}{% if request.GET.genre %}&genre={{ request.GET.genre }}{% endif %}"
+                                                   class="btn btn-outline-secondary btn-sm">
+                                                    ✕ Скрыть плеер
+                                                </a>
+                                            </div>
                                         </div>
-                                    {% else %}
+                                        {% endif %}
+                                        {% else %}
                                         <p class="text-warning mb-0">⚠️ Аудиофайл отсутствует</p>
-                                    {% endif %}
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-muted">🎵 Песен не найдено</h5>
+                            <p class="text-muted">Попробуйте изменить параметры поиска или фильтра</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-        {% empty %}
-            <div class="col-12 text-center">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="text-muted">🎵 Песен не найдено</h5>
-                        <p class="text-muted">Попробуйте изменить параметры поиска или фильтра</p>
+        </div>
+
+        <!-- Блок лидера прослушиваний -->
+        <div class="col-lg-3">
+            <div class="sticky-top" style="top: 20px;">
+                <div class="card shadow-lg border-0"
+                     style="background: linear-gradient(45deg, #FF512F 0%, #F09819 100%);">
+                    <div class="card-body text-white text-center">
+                        <h5 class="card-title mb-3 fw-bold">🏆 ЛИДЕР</h5>
+                        {% if top_song %}
+                        <h6 class="fw-bold mb-2">{{ top_song.title }}</h6>
+                        <p class="mb-2 small">{{ top_song.artist.name }}</p>
+                        <div class="mt-2 p-2 rounded" style="background: rgba(255,255,255,0.2);">
+                            <h5 class="mb-0 fw-bold" style="color: #ffff00;">
+                                {{ top_song.play_count }}
+                            </h5>
+                            <small>прослушиваний</small>
+                        </div>
+                        {% else %}
+                        <p class="mb-0 small">Нет данных</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}
